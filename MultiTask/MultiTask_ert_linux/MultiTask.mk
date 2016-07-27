@@ -84,20 +84,20 @@ COMPILER_TOOL_CHAIN = unix
 #  STANDALONE_SUPPRESS_EXE - Build the standalone target but only create object code modules 
 #                            and do not build an executable
 
-MODEL                   = DataSend
-MODULES                 = DataSend_data.c HostLib_Network.c HostLib_rtw.c ert_main.c 
-MAKEFILE                = DataSend.mk
+MODEL                   = MultiTask
+MODULES                 = HostLib_Network.c HostLib_rtw.c MultiTask_data.c ert_main.c 
+MAKEFILE                = MultiTask.mk
 MATLAB_ROOT             = C:\Matlab2014a\MATLAB\R2014a
 ALT_MATLAB_ROOT         = C:\Matlab2014a\MATLAB\R2014a
 MASTER_ANCHOR_DIR       = 
-START_DIR               = C:\Users\ses\Documents\MATLAB\RaspberryPi\UDPCom\UDPSend
+START_DIR               = C:\Users\ses\Documents\MATLAB\RaspberryPi\MultiTask
 S_FUNCTIONS             = 
 S_FUNCTIONS_LIB         = 
-NUMST                   = 1
+NUMST                   = 2
 NCSTATES                = 0
 COMPUTER                = PCWIN64
 BUILDARGS               = CC=arm-linux-gnueabihf-gcc GENERATE_ASAP2=0
-MULTITASKING            = 0
+MULTITASKING            = 1
 INTEGER_CODE            = 0
 MAT_FILE                = 0
 ONESTEPFCN              = 1
@@ -131,7 +131,7 @@ ADDITIONAL_LDFLAGS      = -ldl
 DEBUG_BUILD             = 0
 
 #--------------------------- Model and reference models -----------------------
-MODELLIB                  = DataSendlib.lib
+MODELLIB                  = MultiTasklib.lib
 MODELREF_LINK_LIBS        = 
 MODELREF_INC_PATH         = 
 RELATIVE_PATH_TO_ANCHOR   = ..
@@ -210,7 +210,7 @@ MATLAB_INCLUDES = \
 # Additional includes 
 ADD_INCLUDES = \
 	-I$(MATLAB_ROOT)\toolbox\shared\dspblks\extern\include \
-	-I$(START_DIR)\DataSend_ert_linux \
+	-I$(START_DIR)\MultiTask_ert_linux \
 	-I$(START_DIR) \
 
 

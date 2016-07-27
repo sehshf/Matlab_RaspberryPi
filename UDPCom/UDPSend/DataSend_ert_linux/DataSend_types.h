@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'DataSend'.
  *
- * Model version                  : 1.42
+ * Model version                  : 1.47
  * Simulink Coder version         : 8.6 (R2014a) 27-Dec-2013
- * C/C++ source code generated on : Tue Jul 26 22:47:29 2016
+ * C/C++ source code generated on : Wed Jul 27 21:07:07 2016
  *
  * Target selection: ert_linux.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex

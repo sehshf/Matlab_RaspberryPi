@@ -1,11 +1,11 @@
 /*
  * File: ert_main.c
  *
- * Code generated for Simulink model 'DataSend'.
+ * Code generated for Simulink model 'MultiTask'.
  *
- * Model version                  : 1.47
+ * Model version                  : 1.50
  * Simulink Coder version         : 8.6 (R2014a) 27-Dec-2013
- * C/C++ source code generated on : Wed Jul 27 21:07:07 2016
+ * C/C++ source code generated on : Wed Jul 27 21:20:20 2016
  *
  * Target selection: ert_linux.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -25,7 +25,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <sys/mman.h>                  /* For mlockall() */
-#include "DataSend.h"                  /* Model's header file */
+#include "MultiTask.h"                 /* Model's header file */
 #include "rtwtypes.h"                  /* MathWorks types */
 #ifndef TRUE
 #define TRUE                           true
@@ -57,7 +57,7 @@
 /**
  * Maximal priority used by base rate thread.
  */
-#define MAX_PRIO                       (sched_get_priority_min(SCHED_FIFO) + 1)
+#define MAX_PRIO                       (sched_get_priority_min(SCHED_FIFO) + 2)
 
 /**
  * Thread handle of the base rate thread.
@@ -68,16 +68,27 @@ pthread_t base_rate_thread;
 /**
  * Thread handles of and semaphores for sub rate threads. The array
  * is indexed by TID, i.e. the first one or two elements are unused.
+ * TID1: sample time = 0.01s, offset = 0.0s
  */
 struct sub_rate {
   pthread_t thread;
   sem_t sem;
-} sub_rate[1];
+} sub_rate[2];
 
 /**
  * Flag if the simulation has been terminated.
  */
 int simulationFinished = 0;
+void *sub_rate1(void *arg)
+{
+  while (!simulationFinished) {
+    sem_wait(&sub_rate[1].sem);        /* sem_val = 1 */
+    MultiTask_step1();
+    sem_wait(&sub_rate[1].sem);        /* sem_val = 0 */
+  }
+
+  return NULL;
+}
 
 /**
  * This is the thread function of the base rate loop.
@@ -88,23 +99,53 @@ void * base_rate()
   struct timespec now, next;
   struct timespec period = { 0U, 5000000U };/* 0.005 seconds */
 
-  boolean_T eventFlags[1];             /* Model has 1 rates */
-  int_T taskCounter[1] = { 0 };
+  boolean_T eventFlags[2];             /* Model has 2 rates */
+  int_T taskCounter[2] = { 0, 0 };
 
-  int_T OverrunFlags[1];
+  int_T OverrunFlags[2];
   int step_sem_value;
   int_T i;
   clock_gettime(CLOCK_MONOTONIC, &next);
 
   /* Main loop, running until all the threads are terminated */
-  while (rtmGetErrorStatus(DataSend_M) == NULL && !rtmGetStopRequested
-         (DataSend_M)) {
+  while (rtmGetErrorStatus(MultiTask_M) == NULL && !rtmGetStopRequested
+         (MultiTask_M)) {
     /* Check subrate overrun, set rates that need to run this time step*/
+    if (taskCounter[1] == 0) {
+      if (eventFlags[1]) {
+        OverrunFlags[0] = false;
+        OverrunFlags[1] = true;
+
+        /* Sampling too fast */
+        rtmSetErrorStatus(MultiTask_M, "Overrun");
+        return;
+      }
+
+      eventFlags[1] = true;
+    }
+
+    taskCounter[1]++;
+    if (taskCounter[1] == 2) {
+      taskCounter[1]= 0;
+    }
 
     /* Trigger sub-rate threads */
+    /* Sampling rate 1, sample time = 0.01, offset = 0.0 */
+    if (eventFlags[1]) {
+      eventFlags[1] = FALSE;
+      sem_getvalue(&sub_rate[1].sem, &step_sem_value);
+      if (step_sem_value) {
+        rtmSetErrorStatus(MultiTask_M, "Overrun");
+        printf("Sub rate 1 overrun, sample time=0.01s, offset=0.0s is too fast\n");
+        break;
+      }
+
+      sem_post(&sub_rate[1].sem);
+      sem_post(&sub_rate[1].sem);
+    }
 
     /* Execute base rate step */
-    DataSend_step();
+    MultiTask_step0();
     do {
       next.tv_sec += period.tv_sec;
       next.tv_nsec += period.tv_nsec;
@@ -130,7 +171,7 @@ void * base_rate()
   simulationFinished = 1;
 
   /* Final step */
-  for (i = 1; i < 1; i++) {
+  for (i = 1; i < 2; i++) {
     sem_post(&sub_rate[i].sem);
     sem_post(&sub_rate[i].sem);
   }
@@ -151,13 +192,21 @@ int_T main(int_T argc, const char_T *argv[])
   CHECKE(mlockall(MCL_CURRENT | MCL_FUTURE));
 
   /* Initialize model */
-  DataSend_initialize();
+  MultiTask_initialize();
   simulationFinished = 0;
 
   /* Prepare task attributes */
   CHECK0(pthread_attr_init(&attr));
   CHECK0(pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED));
   CHECK0(pthread_attr_setschedpolicy(&attr, SCHED_FIFO));
+
+  /* Initializing the step semaphore of the loop 1 */
+  CHECKE(sem_init(&sub_rate[1].sem, 0, 0));
+
+  /* Starting loop 1 thread for sample time = 0.01s, offset = 0.0s. */
+  sched_param.sched_priority = MAX_PRIO - 1;
+  CHECK0(pthread_attr_setschedparam(&attr, &sched_param));
+  CHECK0(pthread_create(&sub_rate[1].thread, &attr, sub_rate1, (void*)1));
 
   /* Starting the base rate thread */
   sched_param.sched_priority = MAX_PRIO;
@@ -167,10 +216,11 @@ int_T main(int_T argc, const char_T *argv[])
 
   /* Wait for threads to finish */
   pthread_join(base_rate_thread, NULL);
+  pthread_join(sub_rate[1].thread, NULL);
 
   /* Terminate model */
-  DataSend_terminate();
-  errStatus = rtmGetErrorStatus(DataSend_M);
+  MultiTask_terminate();
+  errStatus = rtmGetErrorStatus(MultiTask_M);
   if (errStatus != NULL && strcmp(errStatus, "Simulation finished")) {
     if (!strcmp(errStatus, "Overrun")) {
       printf("ISR overrun - sampling rate too fast\n");
@@ -183,7 +233,7 @@ int_T main(int_T argc, const char_T *argv[])
 }
 
 /* Local Variables: */
-/* compile-command: "make -f DataSend.mk" */
+/* compile-command: "make -f MultiTask.mk" */
 /* End: */
 
 /*

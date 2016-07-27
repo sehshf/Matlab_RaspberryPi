@@ -1,11 +1,11 @@
 /*
  * File: rtwtypes.h
  *
- * Code generated for Simulink model 'DataSend'.
+ * Code generated for Simulink model 'MultiTask'.
  *
- * Model version                  : 1.47
+ * Model version                  : 1.50
  * Simulink Coder version         : 8.6 (R2014a) 27-Dec-2013
- * C/C++ source code generated on : Wed Jul 27 21:07:07 2016
+ * C/C++ source code generated on : Wed Jul 27 21:20:20 2016
  *
  * Target selection: ert_linux.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex
