@@ -1,0 +1,114 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>RTW Report - HostLib_rtw.h</title>
+<style> .LN { font-style: italic; color: #888888 } </style>
+<style> .CT { font-style: italic; color: #117755 } </style>
+<style> .PP { font-style: bold;   color: #992211 } </style>
+<style> .KW { font-style: bold;   color: #112266 } </style>
+<style> .DT { font-style: bold;   color: #112266 } </style>
+<link rel="stylesheet" type="text/css" href="rtwreport.css"></link><script language="JavaScript" type="text/javascript" src="rtwreport_utils.js"></script>
+<SCRIPT type="text/javascript" src="rtwannotate.js"></SCRIPT>
+</head>
+<body bgcolor="#eeeeee" text="#1122aa" onload="try {if (top) { if (top.rtwFileOnLoad) top.rtwFileOnLoad(window.document); else local_onload();}} catch(err) {};if (typeof rtwannotate === 'function') {rtwannotate('HostLib_rtw_h_cov.xml');}">
+<p>
+<table border="0" cellspacing="0" cellpadding="6" width="100%%" height="100%%"><tr><td width="100%%" valign="top" bgcolor="#ffffff">
+<h4>File: <a href="../../../../../../../../../Matlab2014a/MATLAB/R2014a/toolbox/shared/dspblks/extern/include/HostLib_rtw.h" target="rtwreport_document_frame" id="linkToText_plain">HostLib_rtw.h</a></h4>
+<pre id="RTWcode">
+<span><a class="LN" name="1">    1   </a><span class="CT">/**</span>
+</span><span><a class="LN" name="2">    2   </a><span class="CT"> * @file HostLib_rtw.h</span>
+</span><span><a class="LN" name="3">    3   </a><span class="CT"> * @brief Helper for C clients of the HostLib library.</span>
+</span><span><a class="LN" name="4">    4   </a><span class="CT"> * Copyright 2007-2008 The MathWorks, Inc.</span>
+</span><span><a class="LN" name="5">    5   </a><span class="CT"> */</span> 
+</span><span><a class="LN" name="6">    6   </a>
+</span><span><a class="LN" name="7">    7   </a><font color="#992211">#</font><span class="PP">ifndef</span> HOSTLIB_RTW_H
+</span><span><a class="LN" name="8">    8   </a><font color="#992211">#</font><span class="PP">define</span> HOSTLIB_RTW_H
+</span><span><a class="LN" name="9">    9   </a>
+</span><span><a class="LN" name="10">   10   </a><span class="CT">/* include headers that we need for opening dynamic libraries */</span>
+</span><span><a class="LN" name="11">   11   </a><font color="#992211">#</font><span class="PP">ifdef</span> _WIN32
+</span><span><a class="LN" name="12">   12   </a><font color="#992211">#</font>  <span class="PP">include</span> <font color="#992211">&lt;windows.h&gt;</font>
+</span><span><a class="LN" name="13">   13   </a><font color="#992211">#</font>  <span class="PP">define</span> FCNPTR FARPROC
+</span><span><a class="LN" name="14">   14   </a><font color="#992211">#</font><span class="PP">else</span> 
+</span><span><a class="LN" name="15">   15   </a><font color="#992211">#</font>  <span class="PP">include</span> <font color="#992211">&lt;dlfcn.h&gt;</font>
+</span><span><a class="LN" name="16">   16   </a><font color="#992211">#</font>  <span class="PP">define</span> FCNPTR void*
+</span><span><a class="LN" name="17">   17   </a><font color="#992211">#</font><span class="PP">endif</span>
+</span><span><a class="LN" name="18">   18   </a>
+</span><span><a class="LN" name="19">   19   </a><span class="CT">/* define DllExport */</span>
+</span><span><a class="LN" name="20">   20   </a><font color="#992211">#</font><span class="PP">if</span> <span class="PP">defined</span>(_WIN32) &amp;&amp; !<span class="PP">defined</span>(__LCC__)
+</span><span><a class="LN" name="21">   21   </a><font color="#992211">#</font>  <span class="PP">if</span> !<span class="PP">defined</span>(DllExport)
+</span><span><a class="LN" name="22">   22   </a><font color="#992211">#</font>    <span class="PP">define</span> DllExport __declspec(dllexport)
+</span><span><a class="LN" name="23">   23   </a><font color="#992211">#</font>  <span class="PP">endif</span>
+</span><span><a class="LN" name="24">   24   </a><font color="#992211">#</font><span class="PP">else</span>
+</span><span><a class="LN" name="25">   25   </a><font color="#992211">#</font>  <span class="PP">define</span> DllExport
+</span><span><a class="LN" name="26">   26   </a><font color="#992211">#</font><span class="PP">endif</span>
+</span><span><a class="LN" name="27">   27   </a>
+</span><span><a class="LN" name="28">   28   </a><span class="CT">/* Wrap everything in extern C */</span>
+</span><span><a class="LN" name="29">   29   </a><font color="#992211">#</font><span class="PP">ifdef</span> __cplusplus
+</span><span><a class="LN" name="30">   30   </a><span class="DT">extern</span> <font color="#1122ff">&quot;C&quot;</font> <b>{</b>
+</span><span><a class="LN" name="31">   31   </a><font color="#992211">#</font><span class="PP">endif</span> 
+</span><span><a class="LN" name="32">   32   </a>
+</span><span><a class="LN" name="33">   33   </a><font color="#992211">#</font><span class="PP">define</span> MAX_ERR_MSG_LEN 1024
+</span><span><a class="LN" name="34">   34   </a>
+</span><span><a class="LN" name="35">   35   </a><span class="CT">/*******************************</span>
+</span><span><a class="LN" name="36">   36   </a><span class="CT"> * Routines which are defined in the library in question.</span>
+</span><span><a class="LN" name="37">   37   </a><span class="CT"> * Also defined are update, outputs, and create, but those are custom to each HostLib</span>
+</span><span><a class="LN" name="38">   38   </a><span class="CT"> *******************************/</span>
+</span><span><a class="LN" name="39">   39   </a><span class="KW">typedef</span> <span class="DT">void</span> (*pFnLibStart)(<span class="DT">void</span> *device, <span class="DT">char</span> *err);
+</span><span><a class="LN" name="40">   40   </a><span class="KW">typedef</span> <span class="DT">void</span> (*pFnLibReset)(<span class="DT">void</span> *device, <span class="DT">char</span> *err);
+</span><span><a class="LN" name="41">   41   </a><span class="KW">typedef</span> <span class="DT">void</span> (*pFnLibTerminate)(<span class="DT">void</span> *device, <span class="DT">char</span> *err);
+</span><span><a class="LN" name="42">   42   </a><span class="KW">typedef</span> <span class="DT">void</span> (*pFnLibDestroy)(<span class="DT">void</span> *device, <span class="DT">char</span> *err, <span class="DT">int</span> type);
+</span><span><a class="LN" name="43">   43   </a>        
+</span><span><a class="LN" name="44">   44   </a><span class="CT">/* Define a table of function pointers, the library handle, and a buffer for any error messages  */</span>
+</span><span><a class="LN" name="45">   45   </a><span class="KW">typedef</span> <span class="KW">struct</span> <b>{</b>
+</span><span><a class="LN" name="46">   46   </a><font color="#992211">#</font><span class="PP">ifdef</span> _WIN32
+</span><span><a class="LN" name="47">   47   </a>    HMODULE library;
+</span><span><a class="LN" name="48">   48   </a><font color="#992211">#</font><span class="PP">else</span>
+</span><span><a class="LN" name="49">   49   </a>    <span class="DT">void</span> *library;
+</span><span><a class="LN" name="50">   50   </a><font color="#992211">#</font><span class="PP">endif</span>
+</span><span><a class="LN" name="51">   51   </a>    <span class="DT">void</span> *instance;
+</span><span><a class="LN" name="52">   52   </a>
+</span><span><a class="LN" name="53">   53   </a>    FCNPTR libCreate;
+</span><span><a class="LN" name="54">   54   </a>    FCNPTR libStart;
+</span><span><a class="LN" name="55">   55   </a>    FCNPTR libReset;
+</span><span><a class="LN" name="56">   56   </a>    FCNPTR libUpdate;
+</span><span><a class="LN" name="57">   57   </a>    FCNPTR libOutputs;
+</span><span><a class="LN" name="58">   58   </a>    FCNPTR libTerminate;
+</span><span><a class="LN" name="59">   59   </a>    FCNPTR libDestroy;
+</span><span><a class="LN" name="60">   60   </a>
+</span><span><a class="LN" name="61">   61   </a>    <span class="DT">char</span> errorMessage[MAX_ERR_MSG_LEN];
+</span><span><a class="LN" name="62">   62   </a><b>}</b> <a name="type_HostLibrary">HostLibrary</a>;
+</span><span><a class="LN" name="63">   63   </a>
+</span><span><a class="LN" name="64">   64   </a><font color="#992211">#</font><span class="PP">define</span> MAKE_FCN_PTR(a,b) *((a*)&amp;b)
+</span><span><a class="LN" name="65">   65   </a>
+</span><span><a class="LN" name="66">   66   </a><span class="CT">/*******************************</span>
+</span><span><a class="LN" name="67">   67   </a><span class="CT"> * Routines which open/close the library and initialize the function pointers,</span>
+</span><span><a class="LN" name="68">   68   </a><span class="CT"> * routines which we define to call the functions in the library,</span>
+</span><span><a class="LN" name="69">   69   </a><span class="CT"> * and utility routines.</span>
+</span><span><a class="LN" name="70">   70   </a><span class="CT"> *******************************/</span>
+</span><span><a class="LN" name="71">   71   </a><span class="DT">void</span> <a href="HostLib_rtw_c.html#fcn_CreateHostLibrary" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'fcn_CreateHostLibrary');" target="_self"><font color="#1122aa">CreateHostLibrary</font></a>(<span class="DT">const</span> <span class="DT">char</span> *libname, <span class="DT">void</span> *adl);
+</span><span><a class="LN" name="72">   72   </a><span class="DT">void</span> <a href="HostLib_rtw_c.html#fcn_DestroyHostLibrary" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'fcn_DestroyHostLibrary');" target="_self"><font color="#1122aa">DestroyHostLibrary</font></a>(<span class="DT">void</span> *adl);
+</span><span><a class="LN" name="73">   73   </a>
+</span><span><a class="LN" name="74">   74   </a><span class="DT">void</span> <a href="HostLib_rtw_c.html#fcn_LibStart" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'fcn_LibStart');" target="_self"><font color="#1122aa">LibStart</font></a>(<span class="DT">void</span> *hostLib);
+</span><span><a class="LN" name="75">   75   </a><span class="DT">void</span> <a href="HostLib_rtw_c.html#fcn_LibReset" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'fcn_LibReset');" target="_self"><font color="#1122aa">LibReset</font></a>(<span class="DT">void</span> *hostLib);
+</span><span><a class="LN" name="76">   76   </a><span class="DT">void</span> <a href="HostLib_rtw_c.html#fcn_LibTerminate" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'fcn_LibTerminate');" target="_self"><font color="#1122aa">LibTerminate</font></a>(<span class="DT">void</span> *hostLib);
+</span><span><a class="LN" name="77">   77   </a><span class="DT">void</span> <a href="HostLib_rtw_c.html#fcn_LibDestroy" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'fcn_LibDestroy');" target="_self"><font color="#1122aa">LibDestroy</font></a>(<span class="DT">void</span> *hostLib, <span class="DT">int</span> type);
+</span><span><a class="LN" name="78">   78   </a>
+</span><span><a class="LN" name="79">   79   </a><span class="DT">int</span> <a href="HostLib_rtw_c.html#fcn_LibError" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'fcn_LibError');" target="_self"><font color="#1122aa">LibError</font></a>(<span class="DT">void</span> *hostLib);
+</span><span><a class="LN" name="80">   80   </a><span class="DT">void</span> <a href="HostLib_rtw_c.html#fcn_PrintError" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'fcn_PrintError');" target="_self"><font color="#1122aa">PrintError</font></a>(<span class="DT">char</span> *message);
+</span><span><a class="LN" name="81">   81   </a><span class="DT">void</span> <a href="HostLib_rtw_c.html#fcn_PrintWarning" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'fcn_PrintWarning');" target="_self"><font color="#1122aa">PrintWarning</font></a>(<span class="DT">char</span> *message);
+</span><span><a class="LN" name="82">   82   </a><span class="DT">char</span> * <a href="HostLib_rtw_c.html#fcn_GetErrorBuffer" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'fcn_GetErrorBuffer');" target="_self"><font color="#1122aa">GetErrorBuffer</font></a>(<span class="DT">void</span> *hostLib);
+</span><span><a class="LN" name="83">   83   </a><span class="DT">void</span> * <a href="HostLib_rtw_c.html#fcn_GetNullPointer" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'fcn_GetNullPointer');" target="_self"><font color="#1122aa">GetNullPointer</font></a>(<span class="DT">void</span>);
+</span><span><a class="LN" name="84">   84   </a>
+</span><span><a class="LN" name="85">   85   </a>
+</span><span><a class="LN" name="86">   86   </a><font color="#992211">#</font><span class="PP">ifdef</span> __cplusplus
+</span><span><a class="LN" name="87">   87   </a><b>}</b> <span class="CT">// extern "C"</span>
+</span><span><a class="LN" name="88">   88   </a><font color="#992211">#</font><span class="PP">endif</span> 
+</span><span><a class="LN" name="89">   89   </a>
+</span><span><a class="LN" name="90">   90   </a>
+</span><span><a class="LN" name="91">   91   </a><font color="#992211">#</font><span class="PP">endif</span> <span class="CT">/* HOSTLIB_RTW_H */</span>
+</span><span><a class="LN" name="92">   92   </a>
+</span></pre>
+</td></tr></table>
+</p>
+</body>
+</html>
