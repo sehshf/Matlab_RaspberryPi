@@ -85,18 +85,18 @@ COMPILER_TOOL_CHAIN = unix
 #                            and do not build an executable
 
 MODEL                   = MultiTask
-MODULES                 = HostLib_Network.c HostLib_rtw.c MultiTask_data.c ert_main.c 
+MODULES                 = HostLib_Network.c HostLib_rtw.c MultiTask_data.c ert_main.c rtGetInf.c rtGetNaN.c rt_matrx.c rt_nonfinite.c rt_printf.c 
 MAKEFILE                = MultiTask.mk
 MATLAB_ROOT             = C:\Matlab2014a\MATLAB\R2014a
 ALT_MATLAB_ROOT         = C:\Matlab2014a\MATLAB\R2014a
 MASTER_ANCHOR_DIR       = 
 START_DIR               = C:\Users\ses\Documents\MATLAB\RaspberryPi\MultiTask
-S_FUNCTIONS             = 
+S_FUNCTIONS             = printout.c
 S_FUNCTIONS_LIB         = 
-NUMST                   = 2
+NUMST                   = 3
 NCSTATES                = 0
 COMPUTER                = PCWIN64
-BUILDARGS               = CC=arm-linux-gnueabihf-gcc GENERATE_ASAP2=0
+BUILDARGS               = CC=arm-linux-gnueabihf-gcc GENERATE_ASAP2=0 OPTS="-DRT -DUSE_RTMODEL -DERT"
 MULTITASKING            = 1
 INTEGER_CODE            = 0
 MAT_FILE                = 0
